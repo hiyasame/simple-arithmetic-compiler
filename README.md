@@ -1,7 +1,5 @@
 # simple-arithmetic-compiler
 
-> 未完成
-
 学习项目，目的是做一些编译原理的实践
 
 使用编译原理的思路实现简单的整数四则运算，编译到自定义的栈式计算机指令 (类似JVM Bytecode)
@@ -26,7 +24,7 @@ ret
 ## 流程
 
 - 分词，将传入的四则运算式分为 `NUMBER`, `OPERATOR`, `PAREN` 三种类型的 Token
-- 语法分析，根据预先设计好的文法进行递归下降解析，得到一棵 AST
+- 语法分析，根据预先设计好的文法进行递归下降解析，验证语法正确性
 ~~~
 Expr -> Term ExprTail
 ExprTail ->  + Term ExprTail
@@ -39,7 +37,8 @@ TermTail ->  * Factor TermTail
 Factor -> (Expr)
            num
 ~~~
-- 将AST转译到指令
+- 生成 AST
+- 将 AST 转译到指令
 
 ## usage
 

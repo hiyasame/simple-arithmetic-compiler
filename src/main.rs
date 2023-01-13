@@ -3,12 +3,13 @@
 use std::error::Error;
 use std::fmt::Debug;
 use std::fs::File;
-use std::io::Read;
+use std::io::{Read, Write};
 use std::process::exit;
 use clap::{arg, command};
 use colored::Colorize;
-use crate::parser::parse;
+use crate::parser::{parse, parse_ast};
 use crate::tokenizer::tokenizer;
+use crate::transformer::transform;
 
 mod tokenizer;
 mod parser;
@@ -35,9 +36,15 @@ fn main() -> Result<()> {
             let mut buf = String::new();
             File::open(source_path)?.read_to_string(&mut buf)?;
             let tokens = tokenizer(&buf);
-            println!("{:?}", tokens);
-            let ast = parse(tokens).unwrap();
-
+            if parse(tokens.clone()) {
+                let ast = parse_ast(tokens).unwrap();
+                ast.print();
+                let code = transform(ast);
+                let mut output_file = File::create(output_path)?;
+                output_file.write(code.as_bytes())?;
+            } else {
+                error("not a legal expression")
+            }
         }
     } else if let Some(matches) = matches.subcommand_matches("exec")  {
         // 执行相关逻辑
